@@ -1,0 +1,45 @@
+time="2025-09-28T16:17:54+09:00" level=warning msg="/home/hrfm1623/pg18/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+Timing is on.
+                                                      version                                                       
+--------------------------------------------------------------------------------------------------------------------
+ PostgreSQL 18.0 (Debian 18.0-1.pgdg13+3) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+(1 row)
+
+Time: 0.355 ms
+Checking multicolumn index usage on current server
+                                                                 QUERY PLAN                                                                 
+--------------------------------------------------------------------------------------------------------------------------------------------
+ Index Scan using skip_scan_demo_pk on skip_scan_demo  (cost=0.29..583.36 rows=199 width=26) (actual time=0.019..0.560 rows=200.00 loops=1)
+   Index Cond: (product_id = 42)
+   Index Searches: 191
+   Buffers: shared hit=599
+ Planning:
+   Buffers: shared hit=79
+ Planning Time: 0.150 ms
+ Execution Time: 0.574 ms
+(8 rows)
+
+Time: 1.057 ms
+Checking execution with extra selectivity constraints
+                                                                 QUERY PLAN                                                                 
+--------------------------------------------------------------------------------------------------------------------------------------------
+ Index Scan using skip_scan_demo_pk on skip_scan_demo  (cost=0.29..583.86 rows=110 width=26) (actual time=0.006..0.276 rows=114.00 loops=1)
+   Index Cond: (product_id = 42)
+   Filter: (quantity > 500)
+   Rows Removed by Filter: 86
+   Index Searches: 191
+   Buffers: shared hit=593
+ Planning:
+   Buffers: shared hit=7
+ Planning Time: 0.034 ms
+ Execution Time: 0.283 ms
+(10 rows)
+
+Time: 0.436 ms
+Execution time for baseline query
+ count 
+-------
+   200
+(1 row)
+
+Time: 0.317 ms

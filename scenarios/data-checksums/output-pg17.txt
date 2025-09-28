@@ -1,0 +1,13 @@
+time="2025-09-28T16:18:57+09:00" level=warning msg="/home/hrfm1623/pg18/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+Timing is off.
+Cluster checksum setting
+      name      |         setting          
+----------------+--------------------------
+ data_checksums | off
+ data_directory | /var/lib/postgresql/data
+(2 rows)
+
+pg_control_system view (requires superuser)
+psql:/workspace/scenarios/data-checksums/check.sql:11: ERROR:  relation "pg_control_system" does not exist
+LINE 4: FROM pg_control_system AS control;
+             ^

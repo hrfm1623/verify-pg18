@@ -1,0 +1,30 @@
+time="2025-09-28T16:18:22+09:00" level=warning msg="/home/hrfm1623/pg18/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+Timing is on.
+                                                      version                                                       
+--------------------------------------------------------------------------------------------------------------------
+ PostgreSQL 18.0 (Debian 18.0-1.pgdg13+3) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+(1 row)
+
+Time: 0.171 ms
+Checking for built-in uuidv7()
+                uuidv7                
+--------------------------------------
+ 01998f2f-db73-79f5-89a7-306b80c39671
+ 01998f2f-db73-7a0e-b0b1-db7110b65b43
+ 01998f2f-db73-7a11-8855-dc1e940839cb
+ 01998f2f-db73-7a13-8630-780710ec0a57
+ 01998f2f-db73-7a15-a32f-68b804d9cf47
+(5 rows)
+
+Time: 0.144 ms
+Inspecting default ordering with uuidv7() values
+                  id                  |             previous_id              
+--------------------------------------+--------------------------------------
+ 01998f2f-db73-7f58-acfa-581923227a15 | 
+ 01998f2f-db73-7f6f-aa59-d74f21092cfb | 01998f2f-db73-7f58-acfa-581923227a15
+ 01998f2f-db73-7f72-af86-266fd2853a2c | 01998f2f-db73-7f6f-aa59-d74f21092cfb
+ 01998f2f-db73-7f74-9529-cce57fdcce36 | 01998f2f-db73-7f72-af86-266fd2853a2c
+ 01998f2f-db73-7f76-bf2e-ce5da7795474 | 01998f2f-db73-7f74-9529-cce57fdcce36
+(5 rows)
+
+Time: 0.316 ms

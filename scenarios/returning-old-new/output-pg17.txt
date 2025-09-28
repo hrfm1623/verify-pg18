@@ -1,0 +1,17 @@
+time="2025-09-28T16:18:29+09:00" level=warning msg="/home/hrfm1623/pg18/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+Timing is on.
+DROP TABLE
+Time: 5.478 ms
+CREATE TABLE
+Time: 5.015 ms
+INSERT 0 10
+Time: 2.878 ms
+Running UPDATE with RETURNING OLD/NEW (PostgreSQL 18 feature)
+BEGIN
+Time: 0.047 ms
+psql:/workspace/scenarios/returning-old-new/check.sql:20: ERROR:  missing FROM-clause entry for table "old"
+LINE 4: RETURNING OLD.balance AS before_balance,
+                  ^
+Time: 0.143 ms
+ROLLBACK
+Time: 0.048 ms

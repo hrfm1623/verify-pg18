@@ -11,7 +11,7 @@ services:
     ports:
       - "5417:5432"
     volumes:
-      - ./data/pg17:/var/lib/postgresql/data
+      - pg17-data:/var/lib/postgresql/data
       - ./:/workspace:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
@@ -29,10 +29,14 @@ services:
     ports:
       - "5418:5432"
     volumes:
-      - ./data/pg18:/var/lib/postgresql/data
+      - pg18-data:/var/lib/postgresql/data
       - ./:/workspace:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+volumes:
+  pg17-data:
+  pg18-data:

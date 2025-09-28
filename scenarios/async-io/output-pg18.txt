@@ -1,0 +1,27 @@
+time="2025-09-28T16:18:51+09:00" level=warning msg="/home/hrfm1623/pg18/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+Timing is on.
+Inspecting async I/O configuration
+ io_method 
+-----------
+ worker
+(1 row)
+
+Time: 0.093 ms
+ io_combine_limit 
+------------------
+ 128kB
+(1 row)
+
+Time: 0.063 ms
+ io_max_combine_limit 
+----------------------
+ 128kB
+(1 row)
+
+Time: 0.129 ms
+Reading from pg_aios view (only exists on PostgreSQL 18)
+ pid | io_id | io_generation | state | operation | off | length | target | handle_data_len | raw_result | result | target_desc | f_sync | f_localmem | f_buffered 
+-----+-------+---------------+-------+-----------+-----+--------+--------+-----------------+------------+--------+-------------+--------+------------+------------
+(0 rows)
+
+Time: 0.510 ms

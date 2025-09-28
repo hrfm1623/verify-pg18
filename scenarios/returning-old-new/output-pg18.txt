@@ -1,0 +1,22 @@
+time="2025-09-28T16:18:39+09:00" level=warning msg="/home/hrfm1623/pg18/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+Timing is on.
+DROP TABLE
+Time: 5.097 ms
+CREATE TABLE
+Time: 2.961 ms
+INSERT 0 10
+Time: 2.382 ms
+Running UPDATE with RETURNING OLD/NEW (PostgreSQL 18 feature)
+BEGIN
+Time: 0.048 ms
+ before_balance | after_balance | id 
+----------------+---------------+----
+        1285.24 |       1235.24 |  1
+        1242.45 |       1192.45 |  2
+        1336.75 |       1286.75 |  3
+(3 rows)
+
+UPDATE 3
+Time: 0.224 ms
+ROLLBACK
+Time: 0.067 ms

@@ -1,0 +1,20 @@
+time="2025-09-28T16:18:06+09:00" level=warning msg="/home/hrfm1623/pg18/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+Timing is on.
+                                                      version                                                       
+--------------------------------------------------------------------------------------------------------------------
+ PostgreSQL 17.6 (Debian 17.6-2.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+(1 row)
+
+Time: 0.170 ms
+Checking for built-in uuidv7()
+psql:/workspace/scenarios/uuidv7/check.sql:5: ERROR:  function uuidv7() does not exist
+LINE 1: SELECT uuidv7()
+               ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+Time: 0.196 ms
+Inspecting default ordering with uuidv7() values
+psql:/workspace/scenarios/uuidv7/check.sql:16: ERROR:  function uuidv7() does not exist
+LINE 2:     SELECT uuidv7() AS id
+                   ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+Time: 0.098 ms

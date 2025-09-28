@@ -1,0 +1,43 @@
+time="2025-09-28T16:17:43+09:00" level=warning msg="/home/hrfm1623/pg18/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+Timing is on.
+                                                      version                                                       
+--------------------------------------------------------------------------------------------------------------------
+ PostgreSQL 17.6 (Debian 17.6-2.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+(1 row)
+
+Time: 0.221 ms
+Checking multicolumn index usage on current server
+                                                   QUERY PLAN                                                   
+----------------------------------------------------------------------------------------------------------------
+ Seq Scan on skip_scan_demo  (cost=0.00..1589.00 rows=199 width=26) (actual time=0.007..2.673 rows=200 loops=1)
+   Filter: (product_id = 42)
+   Rows Removed by Filter: 79800
+   Buffers: shared hit=589
+ Planning:
+   Buffers: shared hit=79
+ Planning Time: 0.134 ms
+ Execution Time: 2.691 ms
+(8 rows)
+
+Time: 3.002 ms
+Checking execution with extra selectivity constraints
+                                                   QUERY PLAN                                                   
+----------------------------------------------------------------------------------------------------------------
+ Seq Scan on skip_scan_demo  (cost=0.00..1789.00 rows=111 width=26) (actual time=0.005..3.029 rows=109 loops=1)
+   Filter: ((quantity > 500) AND (product_id = 42))
+   Rows Removed by Filter: 79891
+   Buffers: shared hit=589
+ Planning:
+   Buffers: shared hit=7
+ Planning Time: 0.035 ms
+ Execution Time: 3.036 ms
+(8 rows)
+
+Time: 3.200 ms
+Execution time for baseline query
+ count 
+-------
+   200
+(1 row)
+
+Time: 0.973 ms
