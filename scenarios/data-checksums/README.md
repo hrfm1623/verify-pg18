@@ -1,0 +1,15 @@
+# Data checksums default
+
+PostgreSQL 18 enables data checksums by default during `initdb`, while PostgreSQL 17 leaves them disabled unless explicitly requested. This scenario shows how to inspect the setting on both clusters.
+
+## How to run
+1. Ensure containers are up: `docker compose up -d`.
+2. Run the inspection script:
+   - PostgreSQL 17: `docker compose exec pg17 psql -U postgres -d demo -f /workspace/scenarios/data-checksums/check.sql`
+   - PostgreSQL 18: `docker compose exec pg18 psql -U postgres -d demo -f /workspace/scenarios/data-checksums/check.sql`
+
+## Expected observation
+- **PostgreSQL 17** reports `data_checksums = off` unless you initialized the cluster with `--data-checksums`.
+- **PostgreSQL 18** reports `data_checksums = on`, matching the new default.
+
+If you re-initialize the data directory, remember to wipe the `./data/pg17` or `./data/pg18` folder first so the Docker entrypoint can run `initdb` again with the desired options.

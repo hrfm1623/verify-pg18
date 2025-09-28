@@ -1,0 +1,18 @@
+# Skip scan planner change
+
+This scenario highlights the new planner ability in PostgreSQL 18 to perform skip scans on multicolumn B-tree indexes, allowing later index columns to be used even when the leading column is not constrained.
+
+## How to run
+1. Start the containers with `docker compose up -d`.
+2. Load the dataset in both clusters:
+   - PostgreSQL 17: `docker compose exec pg17 psql -U postgres -d demo -f /workspace/scenarios/skip-scan/setup.sql`
+   - PostgreSQL 18: `docker compose exec pg18 psql -U postgres -d demo -f /workspace/scenarios/skip-scan/setup.sql`
+3. Compare the plans:
+   - PostgreSQL 17: `docker compose exec pg17 psql -U postgres -d demo -f /workspace/scenarios/skip-scan/compare.sql`
+   - PostgreSQL 18: `docker compose exec pg18 psql -U postgres -d demo -f /workspace/scenarios/skip-scan/compare.sql`
+
+## Expected observation
+- **PostgreSQL 17** is likely to fall back to a sequential scan when filtering only on `product_id` because the index is ordered by `(region_id, product_id)`. You may see `Seq Scan` or a much higher cost.
+- **PostgreSQL 18** should display `Index Scan using skip_scan_demo_pk on skip_scan_demo` with `Rows Removed by Index Recheck` showing the planner is skipping across different `region_id` values. Execution time and buffer usage should drop.
+
+Re-run with different `product_id` predicates to confirm the skip scan remains effective.

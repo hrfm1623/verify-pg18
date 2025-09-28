@@ -1,0 +1,26 @@
+# Asynchronous I/O subsystem
+
+PostgreSQL 18 introduces an asynchronous I/O subsystem controlled by `io_method` and exposes activity through the `pg_aios` view. This scenario helps you flip the new settings on the PostgreSQL 18 container and observe the differences versus PostgreSQL 17.
+
+## Prerequisites
+- Linux host with kernel 5.10+ recommended if you want to try `io_method = 'io_uring'`.
+- Containers must be restarted after configuration changes, just like any other `postgresql.conf` update.
+
+## Suggested workflow
+1. Start services: `docker compose up -d`.
+2. Check current settings:
+   - PostgreSQL 17: `docker compose exec pg17 psql -U postgres -d demo -f /workspace/scenarios/async-io/inspect.sql`
+   - PostgreSQL 18: `docker compose exec pg18 psql -U postgres -d demo -f /workspace/scenarios/async-io/inspect.sql`
+3. Enable async mode on PostgreSQL 18:
+   ```bash
+   docker compose exec pg18 bash -lc "echo \"io_method = 'async'\" >> /var/lib/postgresql/data/postgresql.conf"
+   docker compose restart pg18
+   ```
+   - Alternatively, edit `postgresql.conf` within the data directory and set `io_method` to `async` or `io_uring` if supported.
+4. Run a workload (e.g., `pgbench -i -s 10 demo && pgbench demo -T 60`) on both versions and compare `pg_aios` activity plus latency metrics.
+
+## Expected observation
+- **PostgreSQL 17** reports `io_method` as `sync` and the `pg_aios` query fails because the view does not exist.
+- **PostgreSQL 18** exposes the new settings and returns rows from `pg_aios` once async I/O activity occurs. Monitoring `pg_stat_io` alongside `pg_aios` should show reduced wait time when asynchronous requests are coalesced.
+
+Clean up any manual edits by removing the lines you added to `postgresql.conf` and restarting the container.

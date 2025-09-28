@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+  pg17:
+    image: postgres:17
+    container_name: pg18-lab-pg17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: demo
+    ports:
+      - "5417:5432"
+    volumes:
+      - ./data/pg17:/var/lib/postgresql/data
+      - ./:/workspace:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pg18:
+    image: postgres:18
+    container_name: pg18-lab-pg18
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: demo
+    ports:
+      - "5418:5432"
+    volumes:
+      - ./data/pg18:/var/lib/postgresql/data
+      - ./:/workspace:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

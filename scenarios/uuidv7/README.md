@@ -1,0 +1,13 @@
+# uuidv7() built-in function
+
+PostgreSQL 18 adds a native `uuidv7()` function for generating time-ordered UUIDs without the `pgcrypto` extension. The script in this folder highlights the difference from PostgreSQL 17.
+
+## How to run
+1. Ensure the containers are up: `docker compose up -d`.
+2. Execute the check script on both versions:
+   - PostgreSQL 17: `docker compose exec pg17 psql -U postgres -d demo -f /workspace/scenarios/uuidv7/check.sql`
+   - PostgreSQL 18: `docker compose exec pg18 psql -U postgres -d demo -f /workspace/scenarios/uuidv7/check.sql`
+
+## Expected observation
+- **PostgreSQL 17** raises `function uuidv7() does not exist`, confirming the built-in is unavailable.
+- **PostgreSQL 18** returns ordered UUIDs; observe how the values increase monotonically, making them friendlier to B-tree indexes than traditional `uuid_generate_v4()`.

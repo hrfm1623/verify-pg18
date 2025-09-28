@@ -1,0 +1,75 @@
+# PostgreSQL 18 release highlights
+
+## Overview
+
+- **Release date:** 2025-09-25.
+- **Primary sources:** official [PostgreSQL 18 Release Notes](https://www.postgresql.org/docs/release/18.0/) and the [release announcement](https://www.postgresql.org/about/news/postgresql-18-released-2930/).
+- PostgreSQL 18 extends the 17.x line with a focus on asynchronous I/O, planner/index improvements, SQL and constraint capabilities, modern authentication, and sturdier upgrade paths.
+
+## Key changes by theme
+
+### Performance and storage
+
+- **Async I/O subsystem:** New `io_method = async` (with supporting `io_combine_limit` and `io_max_combine_limit`) lets backends queue reads, boosting sequential scans, bitmap heap scans, and vacuum operations; new `pg_aios` view exposes activity.
+  - _Verification idea:_ Benchmark sequential scans and autovacuum behaviour with and without `io_method = async` on representative workloads.
+- **Improved vacuum behaviour:** Normal vacuums can now freeze all-visible pages and a new `vacuum_max_eager_freeze_failure_rate` option governs the aggressiveness.
+  - _Verification idea:_ Inspect freeze map statistics and table bloat before/after long-running vacuums.
+- **Data checksums default on:** `initdb` now enables data checksums unless `--no-data-checksums` is supplied, so pg_upgrade targets must match checksum settings.
+  - _Verification idea:_ Confirm cluster initialization defaults and pg_upgrade compatibility when migrating checksum-disabled clusters.
+
+### Query planning and indexing
+
+- **Self-join elimination and smarter DISTINCT:** Planner removes redundant self-joins, reorders DISTINCT keys, and better estimates for `generate_series()` and partition-heavy workloads.
+  - _Verification idea:_ Compare `EXPLAIN` plans for analytics queries that previously required manual rewrites.
+- **Skip scans on multicolumn B-tree indexes:** Queries can use later columns even when leading columns are unconstrained.
+  - _Verification idea:_ Re-run workloads that required expression indexes to see if skip scan reduces index proliferation.
+- **GIN parallel builds and range-index sorting:** Parallelism now extends to GIN index builds and sorted input accelerates GiST/B-tree range type indexes.
+  - _Verification idea:_ Time index creation on large datasets with and without `maintenance_work_mem` tuning.
+
+### SQL and data model features
+
+- **Virtual generated columns by default:** Generated columns now compute on read unless declared `STORED`, reducing storage overhead for lightweight expressions.
+  - _Verification idea:_ Validate planner estimates and update strategies for schemas that relied on stored generated columns.
+- **`uuidv7()` built-in:** Adds timestamp-ordered UUID generation for append-heavy tables and replication-friendly primary keys.
+  - _Verification idea:_ Measure index locality compared with `uuid_generate_v4()` and pgcrypto variants.
+- **Temporal constraints:** PRIMARY KEY, UNIQUE, and FOREIGN KEY constraints accept period clauses to enforce non-overlapping ranges.
+  - _Verification idea:_ Model bi-temporal tables and test constraint enforcement under concurrent insert workloads.
+- **`NEW`/`OLD` in `RETURNING`:** DML statements can reference pre- and post-change tuples in `RETURNING`, simplifying auditing triggers.
+  - _Verification idea:_ Replace trigger-based logging with direct `RETURNING` usage and compare output payloads.
+
+### Security and authentication
+
+- **OAuth 2.0 authentication:** Adds `auth_oauth` provider for delegated auth flows, complementing SCRAM and certificates.
+  - _Verification idea:_ Prototype integration with an OAuth provider (e.g., Okta) and evaluate token refresh behaviour.
+- **MD5 password deprecation warnings:** `CREATE/ALTER ROLE` now warns when setting MD5 hashes; removal slated for a future major release.
+  - _Verification idea:_ Inventory existing MD5 credentials and outline migration to SCRAM-SHA-256.
+
+### Administration and tooling
+
+- **`pg_upgrade` keeps optimizer stats:** Upgrades retain collected statistics, reducing post-upgrade plan instability.
+  - _Verification idea:_ Compare query plans immediately after pg_upgrade versus forced `ANALYZE`.
+- **`VACUUM`/`ANALYZE` inherit children by default:** Parent calls now process partitions unless `ONLY` is specified.
+  - _Verification idea:_ Audit maintenance jobs for redundant child-table loops.
+- **`COPY FROM` CSV stricter on `\.`:** Server no longer treats `\.` as EOF inside CSV input; psql still does for STDIN.
+  - _Verification idea:_ Test bulk loads with older clients and confirm compatibility.
+
+### Observability and logging
+
+- **Granular connection logging:** `log_connections` accepts levels and can report connection stage durations; `%L` escape outputs client IP in `log_line_prefix`.
+  - _Verification idea:_ Capture connection latencies in staging to tune load balancers.
+- **Memory context catalog cleanup:** `pg_backend_memory_contexts` structure changes (remove `parent`, 1-based levels) align with new instrumentation.
+  - _Verification idea:_ Update internal dashboards or extensions parsing these views.
+
+### Compatibility considerations
+
+- Time zone abbreviation resolution now favours session settings before cluster defaults, which may alter parsing of ambiguous zone abbreviations.
+- Unlogged partitioned tables are disallowed; `ALTER TABLE ... SET UNLOGGED` now errors if partitions are involved.
+- Full-text search uses the cluster’s default collation provider; ICU/builtin clusters should reindex FTS objects after upgrade.
+
+## Verification backlog starters
+
+1. Async I/O benchmarking harness (pgbench or custom SQL scripts) to measure throughput/latency deltas.
+2. Regression tests for skip-scan adoption using existing schemas that previously needed covering indexes.
+3. Prototype OAuth authentication flow using test identity provider and document required GUCs.
+4. Migration rehearsal capturing checksum defaults and `pg_upgrade` stats retention steps.
+5. Temporal constraint sample schema with concurrency tests and replication considerations.
